@@ -1,3 +1,4 @@
+import re
 import sys
 import time
 import psutil
@@ -24,6 +25,32 @@ def sysinfo(measure='test'):
 	}]
 	print(DATASET)
 
+def netinfo(measure):
+	RESPONSE = callSubProc("netstat -s")
+
+	IP_now   = int(re.findall("(\d+) total packets received", RESPONSE, re.MULTILINE)[0])
+	ICMP_now = int(re.findall("(\d+) ICMP messages received", RESPONSE, re.MULTILINE)[0])
+	ICMP_now+= int(re.findall("(\d+) ICMP messages sent", RESPONSE, re.MULTILINE)[0])
+	TCP_now  = int(re.findall("(\d+) segments received", RESPONSE, re.MULTILINE)[0])
+	TCP_now += int(re.findall("(\d+) segments sent out", RESPONSE, re.MULTILINE)[0])
+	UDP_now  = int(re.findall("(\d+) packets received", RESPONSE, re.MULTILINE)[0])
+	UDP_now += int(re.findall("(\d+) packets sent", RESPONSE, re.MULTILINE)[0])
+
+	DATASET = [{
+		"measurement": measure,
+		"time": epochs,
+		"tags":{
+			"metric": "total"
+		},
+		"fields":{
+			"IP"   : IP_now,
+			"ICMP" : ICMP_now,
+			"TCP"  : TCP_now,
+			"UDP"  : UDP_now
+		}
+	}]
+	print(DATASET)
+
 def callSubProc(command):
 	return subprocess.run(command, shell=True, capture_output=True).stdout.decode()
 
@@ -36,3 +63,4 @@ dthour = datetime.now().hour
 epochs = int(time.time())
 
 sysinfo(measure='sys_info' if not isTest else dbTest)
+netinfo(measure='net_info' if not isTest else dbTest)
