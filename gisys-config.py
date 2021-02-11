@@ -1,17 +1,17 @@
-'''
-Required packages:
-InfluxDB
-Grafana
+import subprocess
 
-Required Python modules:
-re
-sys
-time
-psutil
-subprocess
-datetime
-
-Required bash programs:
-net-tools (for netstat)
-
-'''
+dependencies = {
+	'bash': {
+		'net-tools'	: False,
+		'ping'		: False,
+		'awk'		: False
+	},
+	'pypi': {
+		're'		: False,
+		'sys'		: False,
+		'time'		: False,
+		'psutil'	: False,
+		'datetime'	: False,
+		'subprocess': False
+	}
+}
