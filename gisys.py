@@ -1,6 +1,7 @@
 import sys
 import time
 import psutil
+import subprocess
 from datetime import datetime
 
 def sysinfo(measure='test'):
@@ -22,6 +23,9 @@ def sysinfo(measure='test'):
 		}
 	}]
 	print(DATASET)
+
+def callSubProc(command):
+	return subprocess.run(command, shell=True, capture_output=True).stdout.decode()
 
 
 isTest = False if '--commit' in sys.argv else True
