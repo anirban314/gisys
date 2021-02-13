@@ -7,9 +7,9 @@ from datetime import datetime
 
 def sysinfo(measure):
 	SYS_load = [load/psutil.cpu_count()*100 for load in psutil.getloadavg()]
-	CPU_temp = psutil.sensors_temperatures()['cpu_thermal'][0][1]
-	RAM_used = psutil.virtual_memory().percent
-	DSK_root = psutil.disk_usage('/').percent
+	CPU_temp = float(psutil.sensors_temperatures()['cpu_thermal'][0][1])
+	RAM_used = float(psutil.virtual_memory().percent)
+	DSK_root = float(psutil.disk_usage('/').percent)
 	
 	DATASET = [{
 		"measurement": measure,
@@ -18,9 +18,9 @@ def sysinfo(measure):
 			"sys_load_1m" : SYS_load[0],
 			"sys_load_5m" : SYS_load[1],
 			"sys_load_15m": SYS_load[2],
-			"cpu_temp": float(CPU_temp),
-			"ram_used": float(RAM_used),
-			"dsk_used": float(DSK_root)
+			"cpu_temp": CPU_temp,
+			"ram_used": RAM_used,
+			"dsk_used": DSK_root
 		}
 	}]
 	print(DATASET)
