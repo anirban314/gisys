@@ -1,17 +1,10 @@
 import subprocess
 
-dependencies = {
-	'bash': {
-		'net-tools'	: False,
-		'ping'		: False,
-		'awk'		: False
-	},
-	'pypi': {
-		're'		: False,
-		'sys'		: False,
-		'time'		: False,
-		'psutil'	: False,
-		'datetime'	: False,
-		'subprocess': False
-	}
+pypi_modules = {
+	'psutil': False
+}
+bash_packages = {
+	'netstat': 'net-tools',
+	'ping': 'iputils-ping',
+	'awk': 'gawk'
 }
