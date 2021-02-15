@@ -4,8 +4,9 @@ import subprocess
 import sys
 import time
 from datetime import datetime
+from influxdb import InfluxDBClient
 
-def sysinfo(measure):
+def sysinfo(client, measure):
 	load_avg = [load/psutil.cpu_count()*100 for load in psutil.getloadavg()]
 	cpu_temp = float(psutil.sensors_temperatures()['cpu_thermal'][0][1])
 	ram_used = float(psutil.virtual_memory().percent)
@@ -26,7 +27,7 @@ def sysinfo(measure):
 			"dsk_used": dsk_used
 		}
 	}]
-	print(DATASET)
+	client.write_points(DATASET, time_precision='s')
 
 	#Send message via Telegram bot
 	if cpu_temp >= 50 or ram_used >= 50 or dsk_used >= 50:
@@ -52,8 +53,12 @@ if __name__ == "__main__":
 	isTest = False if "--commit" in sys.argv else True
 	dbTest = "test"
 
+	client = InfluxDBClient(host='host', port=8086, username='user', password='pass', database='base')
+
 	dtmins = datetime.now().minute
 	dthour = datetime.now().hour
 	epochs = int(time.time())
 
-	sysinfo(measure='sys_info' if not isTest else dbTest)
+	sysinfo(client=client, measure='sys_info' if not isTest else dbTest)
+
+	client.close()
