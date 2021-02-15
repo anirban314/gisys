@@ -13,6 +13,9 @@ def sysinfo(measure):
 	DATASET = [{
 		"measurement": measure,
 		"time": epochs,
+		"tags":{
+			"host": "localhost-name"
+		},
 		"fields":{
 			"sys_load_1m" : sys_load[0],
 			"sys_load_5m" : sys_load[1],
