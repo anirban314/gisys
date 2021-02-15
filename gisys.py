@@ -30,12 +30,12 @@ def sysinfo(measure):
 def callSubProc(command):
 	return subprocess.run(command, shell=True, capture_output=True).stdout.decode()
 
+if __name__ == '__main__':
+	isTest = False if '--commit' in sys.argv else True
+	dbTest = 'test'
 
-isTest = False if '--commit' in sys.argv else True
-dbTest = 'playground'
+	dtmins = datetime.now().minute
+	dthour = datetime.now().hour
+	epochs = int(time.time())
 
-dtmins = datetime.now().minute
-dthour = datetime.now().hour
-epochs = int(time.time())
-
-sysinfo(measure='sys_info' if not isTest else dbTest)
+	sysinfo(measure='sys_info' if not isTest else dbTest)
