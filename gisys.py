@@ -51,22 +51,6 @@ def netinfo(measure):
 	}]
 	print(DATASET)
 
-def pingtest(measure):
-	IPaddresses = {
-		'lan_gate' : (1, '10.0.0.1', '2'),
-		'web_dns'  : (2, '1.1.1.1', '1')
-	}
-	DATASET = [{'measurement': measure, 'time': epochs, 'fields': {}}]
-
-	for tag, IPset in IPaddresses.items():
-		i, ip, c = IPset
-		response = callSubProc("ping "+ip+" -c "+c+" | awk '/rtt/{print $4}'")
-		if response:
-			ping = float(response.split('/')[0])  #Select ping metric: [0]=min,[1]=avg,[2]=max,[3]=mdev
-			DATASET[0]['fields'][tag] = ping
-		elif i>0 : break
-	print(DATASET)
-
 def callSubProc(command):
 	return subprocess.run(command, shell=True, capture_output=True).stdout.decode()
 
@@ -80,4 +64,3 @@ epochs = int(time.time())
 
 sysinfo(measure='sys_info' if not isTest else dbTest)
 netinfo(measure='net_info' if not isTest else dbTest)
-pingtest(measure='ping_test' if not isTest else dbTest)
