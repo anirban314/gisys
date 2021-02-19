@@ -4,7 +4,8 @@ import subprocess
 
 def checkDependencies():
 	pypi_modules = {
-		'psutil': False
+		'psutil': False,
+		'influxdb': False
 	}
 	bash_packages = {
 		'awk': False,
