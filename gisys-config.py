@@ -3,6 +3,14 @@ import os
 import subprocess
 import sys
 
+
+def checkFilePresent():
+	if os.path.isfile('gisys.py'):
+		return True
+	else:
+		return False
+
+
 def checkDependencies():
 	pypi_modules = {
 		'psutil': False,
@@ -61,6 +69,15 @@ def installDependencies(pypi_modules, bash_packages):
 
 
 if __name__ == "__main__":
+	if checkFilePresent():
+		print("File gisys.py found. Proceeding...")
+	else:
+		print("File gisys.py MISSING. Has it been moved or renamed?")
+		choice = input("Do you want to continue anyway (yes/no)? ").lower()
+		if choice=='n' or choice=='no':
+			print("Quitting!")
+			sys.exit(1)
+
 	if checkDependencies():
 		print("\nAll dependencies installed. Proceeding...")
 	else:
