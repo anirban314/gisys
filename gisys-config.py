@@ -4,23 +4,21 @@ import subprocess
 import sys
 
 
-def checkFilePresent():
+def check_script():
 	if os.path.isfile('gisys.py'):
 		return True
 	else:
 		return False
 
 
-def checkDependencies():
-	pypi_modules = {
+def check_modules():
+	modules = {
 		'psutil': False,
 		'influxdb': False
 	}
-	bash_packages = {}
 
-	print("\nChecking Dependencies...")
-
-	for module in pypi_modules.keys():
+	print("\nChecking Python Modules...")
+	for module in modules.keys():
 		print(f"  {module} is ", end='')
 		try:
 			importlib.import_module(module)
@@ -28,58 +26,41 @@ def checkDependencies():
 			print("MISSING")
 		else:
 			print("installed")
-			pypi_modules[module] = True
-	pypi_installed = all(pypi_modules.values())
+			modules[module] = True
 
-	for package in bash_packages.keys():
-		print(f"  {package} is ", end='')
-		if not subprocess.run(['which', package], capture_output=True).stdout:
-			print("MISSING")
-		else:
-			print("installed")
-			bash_packages[package] = True
-	bash_installed = all(bash_packages.values())
-
-	if not pypi_installed or not bash_installed:
-		choice = input("\nDependencies Missing!\nInstall them now (yes/no)? ").lower()
+	if all(modules.values()):
+		return True
+	else:
+		choice = input("\nModules MISSING! Install them now (yes/no)? ").lower()
 		if choice=='y' or choice=='yes':
-			installDependencies(pypi_modules, bash_packages)
+			install_modules(modules)
+			return True
 		else:
 			return False
-	
-	return True
 
 
-def installDependencies(pypi_modules, bash_packages):
-	install_command = ['sudo', 'pip', 'install']
-	for module, installed in pypi_modules.items():
+def install_modules(modules):
+	command = ['sudo', 'pip', 'install']
+	for module, installed in modules.items():
 		if not installed:
-			install_command.append(module)
+			command.append(module)
 	
-	if len(install_command) > 3:
-		subprocess.run(install_command)
-	
-	install_command = ['sudo', 'apt-get', 'install', '--yes']
-	for package, installed in bash_packages.items():
-		if not installed:
-			install_command.append(package)
-	
-	if len(install_command) > 4:
-		subprocess.run(install_command)
+	if len(command) > 3:
+		subprocess.run(command)
 
 
 if __name__ == "__main__":
-	if checkFilePresent():
-		print("File gisys.py found. Proceeding...")
+	if check_script():
+		print("Script gisys.py found.")
 	else:
-		print("File gisys.py MISSING. Has it been moved or renamed?")
+		print("Script gisys.py MISSING! Has it been moved or renamed?")
 		choice = input("Do you want to continue anyway (yes/no)? ").lower()
 		if choice=='n' or choice=='no':
 			print("Quitting!")
 			sys.exit(1)
 
-	if checkDependencies():
-		print("\nAll dependencies installed. Proceeding...")
+	if check_modules():
+		print("\nRequired modules are installed.")
 	else:
-		print("\nDependencies not installed. Quitting!")
+		print("\nRequired modules are MISSING. Quitting!")
 		sys.exit(1)
