@@ -40,7 +40,7 @@ def check_modules():
 
 
 def install_modules(modules):
-	command = ['sudo', 'pip', 'install']
+	command = ['sudo', 'pip3', 'install']
 	for module, installed in modules.items():
 		if not installed:
 			command.append(module)
