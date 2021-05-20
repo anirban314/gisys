@@ -1,0 +1,17 @@
+{
+    "InfluxDB Server": {
+        "Host": "",
+        "Port": "8086",
+        "Database": "Gisys",
+        "Days to Keep": "14"
+    },
+    "Alert Threshold": {
+        "CPU Temperature (C)": "60",
+        "RAM Usage (%)": "80",
+        "Disk Usage (%)": "80"
+    },
+    "Telegram Bot": {
+        "Token": "",
+        "Chat ID": ""
+    }
+}
