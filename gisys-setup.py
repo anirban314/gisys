@@ -262,6 +262,21 @@ def modify_gisys(configs, lines):
     dsk_used = configs['Alert Threshold']['Disk Usage (%)']
 
     lines = re.sub(
+        r"cpu_temp >= [\d]+: #X#",
+        f"cpu_temp >= {cpu_temp}: #X#",
+        lines, count=1
+    )
+    lines = re.sub(
+        r"ram_used >= [\d]+: #X#",
+        f"ram_used >= {ram_used}: #X#",
+        lines, count=1
+    )
+    lines = re.sub(
+        r"dsk_used >= [\d]+: #X#",
+        f"dsk_used >= {dsk_used}: #X#",
+        lines, count=1
+    )
+    lines = re.sub(
         r"\(host='.*', port=[\d]+, database='.*'\) #X#",
         f"(host='{host}', port={port}, database='{database}') #X#",
         lines, count=1
@@ -285,27 +300,9 @@ def modify_gisys(configs, lines):
 
 
 def modify_telegram(configs, lines):
-    cpu_temp = configs['Alert Threshold']['CPU Temperature (C)']
-    ram_used = configs['Alert Threshold']['RAM Usage (%)']
-    dsk_used = configs['Alert Threshold']['Disk Usage (%)']
     token = configs['Telegram Bot']['Token']
     chat_id = configs['Telegram Bot']['Chat ID']
 
-    lines = re.sub(
-        r"cpu_temp >= [\d]+: #X#",
-        f"cpu_temp >= {cpu_temp}: #X#",
-        lines, count=1
-    )
-    lines = re.sub(
-        r"ram_used >= [\d]+: #X#",
-        f"ram_used >= {ram_used}: #X#",
-        lines, count=1
-    )
-    lines = re.sub(
-        r"dsk_used >= [\d]+: #X#",
-        f"dsk_used >= {dsk_used}: #X#",
-        lines, count=1
-    )
     lines = re.sub(
         r"token = '.*' #X#",
         f"token = '{token}' #X#",
