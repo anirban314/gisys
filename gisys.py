@@ -5,12 +5,13 @@ import psutil, socket, time
 # the setup process are, and need to be, marked with '#X#' at the end.
 
 
+
 def sys_info(influx, client, measure):
     load_avg = [load/psutil.cpu_count()*100 for load in psutil.getloadavg()]
     cpu_temp = float(psutil.sensors_temperatures()['cpu_thermal'][0][1])
     ram_used = float(psutil.virtual_memory().percent)
     dsk_used = float(psutil.disk_usage('/').percent)
-    
+
     dataset = [{
         'measurement': measure,
         'time': epochs,
@@ -28,6 +29,7 @@ def sys_info(influx, client, measure):
     }]
     influx.write_points(dataset, time_precision='s')
     return dataset[0]['fields']
+
 
 
 def net_info(influx, client, measure):
@@ -50,7 +52,6 @@ def net_info(influx, client, measure):
             'dropout'     : io_now.dropout
         }
     }]
-
     query_string = f"SELECT last(*) FROM {measure} WHERE record_type='total' AND client='{client}'"
     io_last = list(influx.query(query_string).get_points())
     if io_last:
@@ -75,8 +76,30 @@ def net_info(influx, client, measure):
             }
         })
     influx.write_points(dataset, time_precision='s')
-
     return False
+
+
+
+def alert_user(sys_, client, epochs):
+    message = f"ALERT\nClient: {client}\nEpochS: {epochs}\n"
+
+    cpu_temp = sys_['cpu_temp']
+    ram_used = sys_['ram_used']
+    dsk_used = sys_['dsk_used']
+    if cpu_temp >= 60: #X#
+        message+= f"\nCPU Temperature: {cpu_temp}\u2103"
+    if ram_used >= 80: #X#
+        message+= f"\nMemory Usage: {ram_used}%"
+    if dsk_used >= 80: #X#
+        message+= f"\nRoot Disk Usage: {dsk_used}%"
+
+    message+= f"\n\nLoad Avg, 1 min: {sys_['load_1m']}%"
+    message+= f"\nLoad Avg, 5 min: {sys_['load_5m']}%"
+    message+= f"\nLoad Avg, 15 min: {sys_['load_15m']}%"
+
+    import telegram
+    telegram.send_message(message)
+
 
 
 if __name__ == '__main__':
@@ -84,14 +107,12 @@ if __name__ == '__main__':
     client = socket.gethostname()
     epochs = int(time.time())
 
-    sys_alert = sys_info(influx, client, measure='sys_info')
-    net_alert = net_info(influx, client, measure='net_info')
+    sys_data = sys_info(influx, client, measure='sys_info')
+    net_data = net_info(influx, client, measure='net_info')
     influx.close()
 
-    if (sys_alert['cpu_temp'] >= 60 #X#
-        or sys_alert['ram_used'] >= 80 #X#
-        or sys_alert['dsk_used'] >= 80 #X#
-        ):  #Apt sad face lol!
-
-        import telegram
-        telegram.alert_user(sys_alert, client, epochs)
+    if (sys_data['cpu_temp'] >= 60 #X#
+        or sys_data['ram_used'] >= 80 #X#
+        or sys_data['dsk_used'] >= 80 #X#
+        ): #Appropiate sad face!
+        alert_user(sys_data, client, epochs)
