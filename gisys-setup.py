@@ -157,7 +157,7 @@ def check_modules(modules):
         print(f"  {module} is ", end='')
         try:
             importlib.import_module(module)
-        except:
+        except Exception:
             print("MISSING")
         else:
             print("installed")
