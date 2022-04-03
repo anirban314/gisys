@@ -80,7 +80,7 @@ def net_info(influx, client, measure):
 
 
 
-def alert_user(sys_, client, epochs):
+def send_telegram(sys_, client, epochs):
     message = f"ALERT\nClient: {client}\nEpochS: {epochs}\n"
 
     cpu_temp = sys_['cpu_temp']
@@ -115,4 +115,4 @@ if __name__ == '__main__':
         or sys_data['ram_used'] >= 80 #X#
         or sys_data['dsk_used'] >= 80 #X#
         ): #Appropiate sad face!
-        alert_user(sys_data, client, epochs)
+        send_telegram(sys_data, client, epochs)
