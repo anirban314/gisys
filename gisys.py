@@ -81,25 +81,27 @@ def net_info(influx, client, measure):
 
 
 def send_telegram(sys_, client, epochs):
-    message = f"ALERT\nClient: {client}\nEpochS: {epochs}\n"
+    msg = f"ALERT\nClient: {client}\nEpochS: {epochs}\n"
     cpu_temp = sys_['cpu_temp']
     ram_used = sys_['ram_used']
     dsk_used = sys_['dsk_used']
+
     if cpu_temp >= 60: #X#
-        message+= f"\nCPU Temperature: {cpu_temp}\u2103"
+        msg+= f"\nCPU Temperature: {cpu_temp}\u2103"
     if ram_used >= 80: #X#
-        message+= f"\nMemory Usage: {ram_used}%"
+        msg+= f"\nMemory Usage: {ram_used}%"
     if dsk_used >= 80: #X#
-        message+= f"\nRoot Disk Usage: {dsk_used}%"
-    message+= f"\n\nLoad Avg, 1 min: {sys_['load_1m']}%"
-    message+= f"\nLoad Avg, 5 min: {sys_['load_5m']}%"
-    message+= f"\nLoad Avg, 15 min: {sys_['load_15m']}%"
+        msg+= f"\nRoot Disk Usage: {dsk_used}%"
+    
+    msg+= f"\n\nLoad Avg, 1 min: {sys_['load_1m']}%"
+    msg+= f"\nLoad Avg, 5 min: {sys_['load_5m']}%"
+    msg+= f"\nLoad Avg, 15 min: {sys_['load_15m']}%"
 
     import requests
     token = '' #X#
     chat_id = '' #X#
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    params = {'chat_id': chat_id, 'parse_mode': 'markdown', 'text': message}
+    params = {'chat_id': chat_id, 'parse_mode': 'markdown', 'text': msg}
     requests.get(url, params=params)
 
 
