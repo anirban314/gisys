@@ -276,21 +276,7 @@ def modify_gisys(configs, lines):
         f"(host='{host}', port={port}, database='{database}') #X#",
         lines, count=1
     )
-    lines = re.sub(
-        r"cpu_temp >= [\d]+: #X#",
-        f"cpu_temp >= {cpu_temp}: #X#",
-        lines, count=1
-    )
-    lines = re.sub(
-        r"ram_used >= [\d]+: #X#",
-        f"ram_used >= {ram_used}: #X#",
-        lines, count=1
-    )
-    lines = re.sub(
-        r"dsk_used >= [\d]+: #X#",
-        f"dsk_used >= {dsk_used}: #X#",
-        lines, count=1
-    )
+
     lines = re.sub(
         r"\['cpu_temp'\] >= [\d]+ #X#",
         f"['cpu_temp'] >= {cpu_temp} #X#",
@@ -306,6 +292,23 @@ def modify_gisys(configs, lines):
         f"['dsk_used'] >= {dsk_used} #X#",
         lines, count=1
     )
+
+    lines = re.sub(
+        r"cpu_temp >= [\d]+: #X#",
+        f"cpu_temp >= {cpu_temp}: #X#",
+        lines, count=1
+    )
+    lines = re.sub(
+        r"ram_used >= [\d]+: #X#",
+        f"ram_used >= {ram_used}: #X#",
+        lines, count=1
+    )
+    lines = re.sub(
+        r"dsk_used >= [\d]+: #X#",
+        f"dsk_used >= {dsk_used}: #X#",
+        lines, count=1
+    )
+    
     lines = re.sub(
         r"token = '.*' #X#",
         f"token = '{token}' #X#",
