@@ -137,6 +137,7 @@ def main():
         file.write(configs)
 
 
+
 def check_scripts(scripts):
     for script in scripts.keys():
         print(f"  {script} is ", end='')
@@ -150,6 +151,7 @@ def check_scripts(scripts):
         return True
     else:
         return False
+
 
 
 def check_modules(modules):
@@ -169,6 +171,7 @@ def check_modules(modules):
         return modules
 
 
+
 def install_modules(modules):
     command = ['sudo', 'pip3', 'install']
     for module, installed in modules.items():
@@ -176,6 +179,7 @@ def install_modules(modules):
             command.append(module)
     if len(command) > 3:
         subprocess.run(command)
+
 
 
 def set_values(configs):
@@ -199,6 +203,7 @@ def set_values(configs):
     return configs
 
 
+
 def verify_influxdb(host, port):
     from influxdb import InfluxDBClient
     try:
@@ -209,6 +214,7 @@ def verify_influxdb(host, port):
     else:
         influx.close()
         return True
+
 
 
 def create_influxdbase(host, port, dbase, reten):
@@ -237,6 +243,7 @@ def create_influxdbase(host, port, dbase, reten):
         return False
 
 
+
 def verify_telegram(token, chat_id):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     pin = random.randint(1000,9999)
@@ -253,6 +260,7 @@ def verify_telegram(token, chat_id):
     return pin
 
 
+
 def modify_gisys(configs, lines):
     host = configs['InfluxDB Server']['Host']
     port = configs['InfluxDB Server']['Port']
@@ -260,7 +268,14 @@ def modify_gisys(configs, lines):
     cpu_temp = configs['Alert Threshold']['CPU Temperature (C)']
     ram_used = configs['Alert Threshold']['RAM Usage (%)']
     dsk_used = configs['Alert Threshold']['Disk Usage (%)']
+    token = configs['Telegram Bot']['Token']
+    chat_id = configs['Telegram Bot']['Chat ID']
 
+    lines = re.sub(
+        r"\(host='.*', port=[\d]+, database='.*'\) #X#",
+        f"(host='{host}', port={port}, database='{database}') #X#",
+        lines, count=1
+    )
     lines = re.sub(
         r"cpu_temp >= [\d]+: #X#",
         f"cpu_temp >= {cpu_temp}: #X#",
@@ -274,11 +289,6 @@ def modify_gisys(configs, lines):
     lines = re.sub(
         r"dsk_used >= [\d]+: #X#",
         f"dsk_used >= {dsk_used}: #X#",
-        lines, count=1
-    )
-    lines = re.sub(
-        r"\(host='.*', port=[\d]+, database='.*'\) #X#",
-        f"(host='{host}', port={port}, database='{database}') #X#",
         lines, count=1
     )
     lines = re.sub(
@@ -296,13 +306,6 @@ def modify_gisys(configs, lines):
         f"['dsk_used'] >= {dsk_used} #X#",
         lines, count=1
     )
-    return lines
-
-
-def modify_telegram(configs, lines):
-    token = configs['Telegram Bot']['Token']
-    chat_id = configs['Telegram Bot']['Chat ID']
-
     lines = re.sub(
         r"token = '.*' #X#",
         f"token = '{token}' #X#",
@@ -314,6 +317,7 @@ def modify_telegram(configs, lines):
         lines, count=1
     )
     return lines
+
 
 
 if __name__ == "__main__":
