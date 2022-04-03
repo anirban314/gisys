@@ -82,7 +82,6 @@ def net_info(influx, client, measure):
 
 def send_telegram(sys_, client, epochs):
     message = f"ALERT\nClient: {client}\nEpochS: {epochs}\n"
-
     cpu_temp = sys_['cpu_temp']
     ram_used = sys_['ram_used']
     dsk_used = sys_['dsk_used']
@@ -92,13 +91,16 @@ def send_telegram(sys_, client, epochs):
         message+= f"\nMemory Usage: {ram_used}%"
     if dsk_used >= 80: #X#
         message+= f"\nRoot Disk Usage: {dsk_used}%"
-
     message+= f"\n\nLoad Avg, 1 min: {sys_['load_1m']}%"
     message+= f"\nLoad Avg, 5 min: {sys_['load_5m']}%"
     message+= f"\nLoad Avg, 15 min: {sys_['load_15m']}%"
 
-    import telegram
-    telegram.send_message(message)
+    import requests
+    token = '' #X#
+    chat_id = '' #X#
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    params = {'chat_id': chat_id, 'parse_mode': 'markdown', 'text': message}
+    requests.get(url, params=params)
 
 
 
